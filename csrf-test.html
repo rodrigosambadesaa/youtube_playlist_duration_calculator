@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test CSRF</title>
+</head>
+
+<body>
+    <h1>Prueba de CSRF Token</h1>
+    <div id="results"></div>
+
+    <script>
+        async function testCSRF() {
+            const resultsDiv = document.getElementById('results');
+
+            try {
+                // Paso 1: Obtener token CSRF
+                console.log('Obteniendo token CSRF...');
+                const tokenResponse = await fetch('api.php?action=csrf-token', {
+                    method: 'GET',
+                    credentials: 'same-origin',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (!tokenResponse.ok) {
+                    throw new Error(`Error HTTP: ${tokenResponse.status}`);
+                }
+
+                const tokenData = await tokenResponse.json();
+                console.log('Respuesta del token:', tokenData);
+
+                if (!tokenData.success || !tokenData.csrf_token) {
+                    throw new Error('No se pudo obtener token CSRF válido');
+                }
+
+                const csrfToken = tokenData.csrf_token;
+                resultsDiv.innerHTML = `
+                    <p><strong>✅ Token CSRF obtenido:</strong> ${csrfToken.substring(0, 16)}...</p>
+                `;
+
+                // Paso 2: Probar con el token (usando un playlist ID de prueba)
+                console.log('Probando con token CSRF...');
+                const testResponse = await fetch('api.php?action=playlist-duration', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({
+                        playlistId: 'PLrAXtmRdnEQy8VgTl62wdkmMLKWMvOYGF', // ID de prueba
+                        csrf_token: csrfToken
+                    })
+                });
+
+                console.log('Respuesta del API:', testResponse.status);
+                const testData = await testResponse.json();
+                console.log('Datos del API:', testData);
+
+                if (testResponse.ok) {
+                    resultsDiv.innerHTML += `
+                        <p><strong>✅ API funcionando correctamente</strong></p>
+                        <p>Título: ${testData.data?.title || 'N/A'}</p>
+                        <p>Videos: ${testData.data?.videoCount || 'N/A'}</p>
+                    `;
+                } else {
+                    resultsDiv.innerHTML += `
+                        <p><strong>❌ Error en API:</strong> ${testData.error || 'Error desconocido'}</p>
+                    `;
+                }
+
+            } catch (error) {
+                console.error('Error en test:', error);
+                resultsDiv.innerHTML += `
+                    <p><strong>❌ Error:</strong> ${error.message}</p>
+                `;
+            }
+        }
+
+        // Ejecutar test al cargar la página
+        testCSRF();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug API Error</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .log {
+            background: #f8f9fa;
+            padding: 10px;
+            margin: 5px 0;
+            border-left: 3px solid #007bff;
+        }
+
+        .error {
+            border-left-color: #dc3545;
+        }
+
+        .success {
+            border-left-color: #28a745;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px 0;
+        }
+
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Debug API Error 500</h1>
+    <button onclick="testAPI()">Probar API</button>
+    <div id="logs"></div>
+
+    <script>
+        function log(message, type = 'log') {
+            const div = document.createElement('div');
+            div.className = `log ${type}`;
+            div.innerHTML = `<strong>${new Date().toLocaleTimeString()}:</strong> ${message}`;
+            document.getElementById('logs').appendChild(div);
+            console.log(message);
+        }
+
+        async function testAPI() {
+            document.getElementById('logs').innerHTML = '';
+
+            try {
+                // Paso 1: Obtener token CSRF
+                log('🔄 Obteniendo token CSRF...');
+                const tokenResponse = await fetch('api.php?action=csrf-token', {
+                    method: 'GET',
+                    credentials: 'same-origin',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                log(`📡 Token response status: ${tokenResponse.status}`);
+
+                if (!tokenResponse.ok) {
+                    const errorText = await tokenResponse.text();
+                    log(`❌ Error obteniendo token: ${errorText}`, 'error');
+                    return;
+                }
+
+                const tokenData = await tokenResponse.json();
+                log(`✅ Token obtenido: ${tokenData.csrf_token.substring(0, 16)}...`, 'success');
+
+                // Paso 2: Llamada a API
+                log('🔄 Realizando llamada a API...');
+                const apiResponse = await fetch('api.php?action=playlist-duration', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({
+                        playlistId: 'PLrAXtmRdnEQy8VgTl62wdkmMLKWMvOYGF',
+                        csrf_token: tokenData.csrf_token
+                    })
+                });
+
+                log(`📡 API response status: ${apiResponse.status}`);
+
+                // Intentar obtener el contenido como texto primero
+                const responseText = await apiResponse.text();
+                log(`📄 Response text: <pre>${responseText}</pre>`);
+
+                if (!apiResponse.ok) {
+                    log(`❌ Error en API (${apiResponse.status})`, 'error');
+                    try {
+                        const errorData = JSON.parse(responseText);
+                        log(`📋 Error data: <pre>${JSON.stringify(errorData, null, 2)}</pre>`, 'error');
+                    } catch (e) {
+                        log(`📋 Raw error text: ${responseText}`, 'error');
+                    }
+                } else {
+                    log(`✅ API funcionando correctamente`, 'success');
+                    try {
+                        const data = JSON.parse(responseText);
+                        log(`📋 Success data: <pre>${JSON.stringify(data, null, 2)}</pre>`, 'success');
+                    } catch (e) {
+                        log(`📋 Raw success text: ${responseText}`, 'success');
+                    }
+                }
+
+            } catch (error) {
+                log(`💥 JavaScript error: ${error.message}`, 'error');
+                log(`📋 Stack trace: <pre>${error.stack}</pre>`, 'error');
+            }
+        }
+    </script>
+</body>
+
+</html>

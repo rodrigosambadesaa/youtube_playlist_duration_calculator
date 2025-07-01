@@ -1,0 +1,49 @@
+# Archivos de configuración sensibles
+.env
+.env.local
+.env.production
+.env.development
+
+# API Keys y configuración privada
+config_local.php
+api_keys.php
+
+# Logs y cache
+logs/
+*.log
+cache/
+temp/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de backup
+*.bak
+*.backup
+*.tmp
+
+# Directorios de dependencias (si se usan en el futuro)
+vendor/
+node_modules/
+
+# Archivos de IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# Archivos específicos del servidor
+.htpasswd
+error_log
+
+# Certificados y claves privadas
+*.pem
+*.key
+*.crt
+
+# Bases de datos locales
+*.sqlite
+*.db
+
+# Archivos de uploads (si se implementan)
+uploads/

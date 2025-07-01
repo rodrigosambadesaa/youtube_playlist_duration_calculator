@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Duración de Playlist de YouTube</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <i class="fab fa-youtube"></i>
+                <h1>YouTube Playlist Calculator</h1>
+            </div>
+            <p class="subtitle">Calcula la duración total de cualquier playlist de YouTube</p>
+        </header>
+
+        <main class="main-content">
+            <div class="calculator-card">
+                <form id="playlistForm" class="playlist-form">
+                    <div class="input-group">
+                        <label for="playlistUrl" class="input-label">
+                            <i class="fas fa-link"></i>
+                            URL de la Playlist de YouTube
+                        </label>
+                        <div class="input-wrapper">
+                            <input type="url" id="playlistUrl" name="playlistUrl"
+                                placeholder="https://www.youtube.com/playlist?list=..." required autocomplete="off"
+                                spellcheck="false">
+                            <button type="submit" class="submit-btn" id="submitBtn">
+                                <span class="btn-text">Calcular Duración</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                        <div class="input-error" id="urlError"></div>
+                    </div>
+                </form>
+
+                <div class="loading" id="loading" style="display: none;">
+                    <div class="loading-spinner"></div>
+                    <p>Analizando playlist...</p>
+                </div>
+
+                <div class="results" id="results" style="display: none;">
+                    <div class="result-header">
+                        <h2>Resultados de la Playlist</h2>
+                        <button class="reset-btn" id="resetBtn">
+                            <i class="fas fa-refresh"></i>
+                            Nueva Consulta
+                        </button>
+                    </div>
+
+                    <div class="playlist-info">
+                        <div class="playlist-title">
+                            <i class="fas fa-list"></i>
+                            <span id="playlistTitle">Título de la Playlist</span>
+                        </div>
+                        <div class="video-count">
+                            <i class="fas fa-video"></i>
+                            <span id="videoCount">0 videos</span>
+                        </div>
+                    </div>
+
+                    <div class="duration-cards">
+                        <div class="duration-card primary">
+                            <div class="duration-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="duration-info">
+                                <h3>Duración Total</h3>
+                                <div class="duration-value" id="totalDuration">0:00:00</div>
+                            </div>
+                        </div>
+
+                        <div class="duration-card">
+                            <div class="duration-icon">
+                                <i class="fas fa-stopwatch"></i>
+                            </div>
+                            <div class="duration-info">
+                                <h3>En Segundos</h3>
+                                <div class="duration-value" id="totalSeconds">0 segundos</div>
+                            </div>
+                        </div>
+
+                        <div class="duration-card">
+                            <div class="duration-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div class="duration-info">
+                                <h3>Tiempo Estimado</h3>
+                                <div class="duration-value" id="estimatedTime">A velocidad 1x</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="speed-options">
+                        <h3>Duración a diferentes velocidades:</h3>
+                        <div class="speed-grid">
+                            <div class="speed-item">
+                                <span class="speed-label">1.25x</span>
+                                <span class="speed-duration" id="speed125">0:00:00</span>
+                            </div>
+                            <div class="speed-item">
+                                <span class="speed-label">1.5x</span>
+                                <span class="speed-duration" id="speed150">0:00:00</span>
+                            </div>
+                            <div class="speed-item">
+                                <span class="speed-label">1.75x</span>
+                                <span class="speed-duration" id="speed175">0:00:00</span>
+                            </div>
+                            <div class="speed-item">
+                                <span class="speed-label">2x</span>
+                                <span class="speed-duration" id="speed200">0:00:00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="error-message" id="errorMessage" style="display: none;">
+                    <div class="error-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="error-content">
+                        <h3>Error al procesar la playlist</h3>
+                        <p id="errorText">Ha ocurrido un error inesperado.</p>
+                        <button class="retry-btn" id="retryBtn">
+                            <i class="fas fa-redo"></i>
+                            Intentar de nuevo
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2025 YouTube Playlist Calculator. Desarrollado con seguridad y rendimiento en mente.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
