@@ -9,7 +9,7 @@ echo "=== TEST API YOUTUBE ===\n";
 require_once __DIR__ . '/config.php';
 
 $apiKey = YOUTUBE_API_KEY;
-echo "API Key: " . substr($apiKey, 0, 20) . "...\n";
+echo "API key configured: " . ($apiKey ? "yes" : "no") . "\n";
 
 // Test directo con cURL
 $playlistId = 'PLrAXtmRdnEQy8VgTl62wdkmMLKWMvOYGF';
@@ -20,7 +20,7 @@ $url = 'https://www.googleapis.com/youtube/v3/playlists?' . http_build_query([
     'maxResults' => 1
 ]);
 
-echo "URL: " . $url . "\n\n";
+echo "Endpoint: YouTube Data API playlists\n\n";
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $url);
